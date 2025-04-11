@@ -10,7 +10,7 @@ jobs:
       - name: Установить необходимые утилиты
         run: |
           sudo apt update
-          sudo apt install -y socat
+          sudo apt install -y socat curl
 
       - name: Запустить прокси-сервер (socat)
         run: |
@@ -19,5 +19,10 @@ jobs:
           nohup socat TCP-LISTEN:8080,reuseaddr,fork TCP4:$TARGET_IP:$TARGET_PORT &
           echo "Proxy запущен на $(hostname -I | awk '{print $1}'):8080 → $TARGET_IP:$TARGET_PORT"
       
+      - name: Узнать внешний IP GitHub VM
+        run: |
+          echo "Публичный IP GitHub VM:"
+          curl ifconfig.me
+
       - name: Ожидание (чтобы Action не завершался сразу)
         run: sleep 3600
