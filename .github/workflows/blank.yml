@@ -1,0 +1,23 @@
+name: Start Proxy
+
+on:  
+  workflow_dispatch  # Запускается вручную через GitHub
+
+jobs:
+  start_proxy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Установить необходимые утилиты
+        run: |
+          sudo apt update
+          sudo apt install -y socat
+
+      - name: Запустить прокси-сервер (socat)
+        run: |
+          TARGET_IP="94.228.113.142"  # Заменить на нужный IP
+          TARGET_PORT="80"      # Заменить на нужный порт
+          nohup socat TCP-LISTEN:8080,reuseaddr,fork TCP4:$TARGET_IP:$TARGET_PORT &
+          echo "Proxy запущен на $(hostname -I | awk '{print $1}'):8080 → $TARGET_IP:$TARGET_PORT"
+      
+      - name: Ожидание (чтобы Action не завершался сразу)
+        run: sleep 3600
